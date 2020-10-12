@@ -16,3 +16,25 @@ steps:
     projects: 'eShopOnWeb.sln'
     feedsToUse: 'select'
 
+- task: SonarQubePrepare@4
+  inputs:
+    SonarQube: 'LocalSQ_On_TFS_VM'
+    scannerMode: 'MSBuild'
+    projectKey: 'eshop-github'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: 'eShopOnWeb.sln'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'test'
+    projects: 'tests/**/*.csproj'
+    arguments: '--collect "Code Coverage"'
+
+- task: SonarQubeAnalyze@4
+
+- task: SonarQubePublish@4
+  inputs:
+    pollingTimeoutSec: '300'
